@@ -60,7 +60,7 @@ button {
 #door {
     height: 100%;
     width: 100%;
-    background-image: url('res/door2.jpeg');
+    background-image: url('res/door.jpg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -69,12 +69,16 @@ button {
 
 img {
     width: 64px;
-    /*position: absolute;
-    top: 106px; */
     padding: 20px;
     cursor: pointer;
     filter: hue-rotate(-83deg) saturate(0.3) ;
     transition: filter 0.4s;
+    animation: fadeIn 0.75s;
+}
+
+@keyframes fadeIn {
+    0%   {opacity:0;}
+    100% {opacity:1;}
 }
 
 .selected {
@@ -98,7 +102,7 @@ img {
 
 #gem-container {
     z-index: 10;
-    top: 100px;
+    top: 150px;
     left: 0px;
     position: relative;
     width: 100%;

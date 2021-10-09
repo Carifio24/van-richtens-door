@@ -1,27 +1,34 @@
 // This final has only one dependency, which is jQuery
 
+// For the puzzles:
+// I made up most of these myself, but here's a nice resource for generating more:
+// https://www.chiark.greenend.org.uk/~sgtatham/puzzles/js/flip.html
+
 /// Global variables
 const SELECTED = "selected";
 const FAIL = "fail";
 const COMPLETE = "complete";
-const PUZZLES = [
-    { rowCount: 1, columnCount: 6, initialSelections: [[0, 2, 3]], numberOfTries: 4 }, // Solution: [2,4,0,1]
-    { rowCount: 1, columnCount: 7, initialSelections: [[1, 5]], numberOfTries: 5 }, // Solution: [1,2,3,4,5],
-    //{ rowCount: 2, columnCount: 3, initialSelections: [[], []], numberOfTries: 2 }, // Solution: [(0,0), (1,2)]
-    //{ rowCount: 3, columnCount: 3, initialSelections: [[0], [1], [2]], numberOfTries: 2 }, // Solution[(0,2), (2,0)]
-    //{ rowCount: 3, columnCount: 3, initialSelections: [[], [], []], numberOfTries: 5 }, // Solution: [(2,0), (2,2), (0,2), (0,0), (1,1)]
-    //{ rowCount: 2, columnCount: 4, initialSelections: [[1], [3]], numberOfTries: 9 } // Solution: [(0,0), (1,2), (0,3), (0,1), (1,0), (0,2), (1,2), (1,1), (1,3)]
-]
 const GEM_CONTAINER = $("#gem-container");
 const TRANSITION_MS = 750;
+const PUZZLES = [
+    { rowCount: 1, columnCount: 6, initialSelections: [[0, 2, 3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
+    { rowCount: 1, columnCount: 7, initialSelections: [[1, 5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
+    { rowCount: 2, columnCount: 3, initialSelections: [[], []], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
+    { rowCount: 3, columnCount: 3, initialSelections: [[0], [1], [2]], numberOfTries: 2 }, // Solution(2): [(0,2), (2,0)]
+    { rowCount: 3, columnCount: 3, initialSelections: [[], [], []], numberOfTries: 5 }, // Solution (5): [(2,0), (2,2), (0,2), (0,0), (1,1)]
+    { rowCount: 4, columnCount: 4, initialSelections: [[0,1], [0], [0,1,3], [3]], numberOfTries: 6 }, // Solution (6): [(0,1), (1,0), (1,1), (1,3), (2,2), (3,0)]
+    { rowCount: 3, columnCount: 5, initialSelections: [[0,2], [2,3,4], [4]], numberOfTries: 5 }, // Solution (5): [(0,2), (1,2), (1,4), (2,0), (2,4)]
+    // Save for a treasure
+    // { rowCount: 2, columnCount: 4, initialSelections: [[1], [3]], numberOfTries: 12 }, // Solution (9): [(0,0), (1,2), (0,3), (0,1), (1,0), (0,2), (1,2), (1,1), (1,3)]
+]
 
+///// Initial setup
 let count = 0;
 let disabled = false;
 const puzzleIterator = PUZZLES.values();
 let puzzleResult = puzzleIterator.next();
 generate(puzzleResult.value);
 
-Array
 ////// Functions
 function gemID(row, column) {
     return `i${row}-${column}`;
