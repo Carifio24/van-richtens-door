@@ -97,13 +97,6 @@ img {
     filter: hue-rotate(180deg) saturate(1);
 }
 
-#restart {
-    position: fixed;
-    top: 15px;
-    right: 15px;
-    z-index: 9999;
-}
-
 #gem-container {
     z-index: 10;
     position: relative;
@@ -121,4 +114,12 @@ img {
     top: 0px;
     left: 0px;
     z-index: 11;
+}
+
+#fs-button {
+    background-color: transparent;
+    color: white;
+    border-color: white;
+    opacity: 0.5;
+    bottom: 40vw;
 }
