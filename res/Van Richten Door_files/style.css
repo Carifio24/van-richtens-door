@@ -1,0 +1,150 @@
+* {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+html {
+    height: 100vh;
+    width: 100vw;
+}
+
+/* body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+    background-image: url('res/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+} */
+
+h2 {
+    font-size: 28px;
+    font-family: Arial, sans-serif;
+    color: white;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+input {
+    width: 200px;
+    height: 20px;
+    padding: 3px;
+    border-radius: 3px;
+    border: none;
+    color: black;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+button {
+    width: 100px;
+    height: 25px;
+    padding: 3px;
+    border-radius: 3px;
+    border: 2px black solid;
+    color: black;
+    font-size: 16px;
+    background-color: white;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+}
+
+#door {
+    height: 100%;
+    width: 100%;
+    background-image: url('res/door2.jpeg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+}
+
+img {
+    width: 64px;
+    /*position: absolute;
+    top: 106px; */
+    padding: 20px;
+    cursor: pointer;
+    filter: hue-rotate(-83deg) saturate(0.3) ;
+    transition: filter 0.4s;
+}
+
+.selected {
+    filter: hue-rotate(90deg) saturate(0.56);
+}
+
+.fail {
+    filter: hue-rotate(-50deg) saturate(0.7);
+}
+
+.complete {
+    filter: hue-rotate(-100deg) saturate(0.12);
+}
+
+#restart {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 9999;
+}
+
+#gem-container {
+    z-index: 10;
+    top: 100px;
+    left: 0;
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-height: 650px) {
+      #door {
+          background-image: unset;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-around;
+          align-items: center;
+          width: 100%;
+      }
+
+      #door img {
+          position: unset;
+      }
+}
+
+@media screen and (max-width: 640px) {
+      #door {
+          background-image: unset;
+          display: flex;
+          flex-direction: row;
+          justify-content: space-around;
+          align-items: center;
+          width: 100%;
+      }
+
+      #door img {
+          position: unset;
+      }
+}
+
+@media screen and (max-width: 430px) {
+      #door {
+          background-image: url('res/rotate.png');
+          background-size: contain;
+          width: 50%;
+          height: 50%;
+      }
+
+      #door img {
+          display: none;
+      }
+}

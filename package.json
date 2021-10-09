@@ -1,0 +1,14 @@
+{
+  "name": "interactive-door",
+  "version": "0.0.0",
+  "description": "Door puzzle for Van Richten's tower",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jquery": "^3.5.6"
+  }
+}
