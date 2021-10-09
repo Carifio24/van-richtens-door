@@ -29,7 +29,23 @@ const puzzleIterator = PUZZLES.values();
 let puzzleResult = puzzleIterator.next();
 generate(puzzleResult.value);
 
+document.onfullscreenchange = (_event) => {
+    const fsButton = $("#fs-button");
+    if (document.fullscreenElement) {
+        fsButton.hide();
+    } else {
+        fsButton.show();
+    }
+}
+
 ////// Functions
+function makeFullscreen() {
+    const door = $("#door").get(0);
+    if (door.requestFullscreen) {
+        door.requestFullscreen();
+    }
+}
+
 function gemID(row, column) {
     return `i${row}-${column}`;
 }
