@@ -140,8 +140,6 @@ function failAndReset(puzzle) {
 
 function completeAndAdvance(puzzle, nextPuzzle) {
     disabled = true;
-    console.log(puzzle);
-    console.log(nextPuzzle);
     setTimeout(() => {
         setAllGemsToClass(puzzle, COMPLETE);
         setTimeout(() => {
@@ -200,17 +198,13 @@ function handlePuzzleComplete() {
 function handlePress(row, col, stop) {
 
     updateColors(row, col, false);
-    //console.log(puzzleResult);
     const puzzle = puzzleResult.value;
 
     const complete = allSelected(puzzle);
-    //console.log(`complete: ${complete}`);
     if (complete) {
         handlePuzzleComplete();
     } else if (!stop) {
         count += 1;
-        //console.log("Count: ", count);
-        console.log(row, col);
         if (count >= puzzle.numberOfTries && !complete) {
             failAndReset(puzzle);
         }
