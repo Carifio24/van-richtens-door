@@ -97,6 +97,14 @@ img {
     filter: hue-rotate(180deg) saturate(1);
 }
 
+.invisible {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
+}
+
 #gem-container {
     z-index: 10;
     position: relative;
