@@ -8,22 +8,21 @@
 const SELECTED = "selected";
 const FAIL = "fail";
 const COMPLETE = "complete";
-const VISIBLE = "visible";
 const INVISIBLE = "invisible";
 const GEM_CONTAINER = $("#gem-container");
 const TRANSITION_MS = 750;
 const PUZZLES = [
-    // { rowCount: 1, columnCount: 6, initialSelections: [[0, 2, 3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
-    // { rowCount: 1, columnCount: 7, initialSelections: [[1, 5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
-    // { rowCount: 2, columnCount: 3, initialSelections: [[], []], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
-    // { rowCount: 3, columnCount: 3, initialSelections: [[0], [1], [2]], numberOfTries: 2 }, // Solution(2): [(0,2), (2,0)]
-    // { rowCount: 3, columnCount: 3, initialSelections: [[], [], []], numberOfTries: 5 }, // Solution (5): [(2,0), (2,2), (0,2), (0,0), (1,1)]
-    // { rowCount: 4, columnCount: 4, initialSelections: [[0,1], [0], [0,1,3], [3]], numberOfTries: 6 }, // Solution (6): [(0,1), (1,0), (1,1), (1,3), (2,2), (3,0)]
-    // { rowCount: 2, columnCount: 5, initialSelections: [[0,2,3], [1]], numberOfTries: 4 }, // Solution (4): [(0,3), (1,1), (1,2), (1,3)]
-    // { rowCount: 3, columnCount: 5, initialSelections: [[0,2], [2,3,4], [4]], numberOfTries: 5 }, // Solution (5): [(0,2), (1,2), (1,4), (2,0), (2,4)]
-    // { rowCount: 2, columnCount: 4, initialSelections: [[1], [3]], numberOfTries: 12 }, // Solution (7): [(0,0), (0,3), (0,1), (1,0), (0,2), (1,1), (1,3)]
-    //{ rowCount: 3, columnCount: 3, initialSelections: [[1],[],[1]], numberOfTries: 2, invisible: [[],[1], []] } // Solution (2): [(1, 0), (1, 2)]
-    { rowCount: 4, columnCount: 4, initialSelections: [[1], [0,2], [1,2], []], invisible: [[0,3], [], [], [0,3]], numberOfTries: 5 } // Solution (5): [(1,1), (3,2), (2,0), (0,2), (2,3)]
+    { rowCount: 1, columnCount: 6, initialSelections: [[0,0], [0,2], [0,3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
+    // { rowCount: 1, columnCount: 7, initialSelections: [[0,1], [0,5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
+    // { rowCount: 2, columnCount: 3, initialSelections: [], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
+    // { rowCount: 3, columnCount: 3, initialSelections: [[0,0], [1,1], [2,2]], numberOfTries: 2 }, // Solution(2): [(0,2), (2,0)]
+    // { rowCount: 3, columnCount: 3, initialSelections: [], numberOfTries: 5 }, // Solution (5): [(2,0), (2,2), (0,2), (0,0), (1,1)]
+    // { rowCount: 4, columnCount: 4, initialSelections: [[0,0], [0,1], [1,0], [2,0], [2,1], [2,3], [3,3]], numberOfTries: 6 }, // Solution (6): [(0,1), (1,0), (1,1), (1,3), (2,2), (3,0)]
+    // { rowCount: 2, columnCount: 5, initialSelections: [[0,0], [0,2], [0,3], [1,1]], numberOfTries: 4 }, // Solution (4): [(0,3), (1,1), (1,2), (1,3)]
+    // { rowCount: 3, columnCount: 5, initialSelections: [[0,0], [0,2], [1,2], [1,3], [1,4], [2,4]], numberOfTries: 5 }, // Solution (5): [(0,2), (1,2), (1,4), (2,0), (2,4)]
+    // { rowCount: 2, columnCount: 4, initialSelections: [[0,1], [1,3]], numberOfTries: 12 }, // Solution (7): [(0,0), (0,3), (0,1), (1,0), (0,2), (1,1), (1,3)]
+    //{ rowCount: 3, columnCount: 3, initialSelections: [[0,1], [2,1]], numberOfTries: 2, invisible: [[1,1]] } // Solution (2): [(1, 0), (1, 2)]
+    { rowCount: 4, columnCount: 4, initialSelections: [[0,1], [1,0], [1,2], [2,1], [2,2]], invisible: [[0,0], [0,2], [3,0], [3,3]], numberOfTries: 5 } // Solution (5): [(1,1), (3,2), (2,0), (0,2), (2,3)]
 ]
 
 ///// Initial setup
@@ -43,6 +42,21 @@ document.onfullscreenchange = (_event) => {
 }
 
 ////// Functions
+
+// A simple containment check for our entries
+// all of which are just arrays of numbers
+function contains(array, item) {
+    if (!array) { return false; }
+    return array.some((el) => {
+        for (let i = 0; i < item.length; i++) {
+            if (i >= el.length || el[i] !== item[i]) {
+                return false;
+            }
+        }
+        return true;
+    });
+}
+
 function makeFullscreen() {
     const door = $("#door").get(0);
     if (door.requestFullscreen) {
@@ -62,7 +76,7 @@ function gemSelectors(puzzle) {
     let selectors = [];
     for (let row = 0; row < puzzle.rowCount; row++) {
         for (let col = 0; col < puzzle.columnCount; col++) {
-            if (puzzle.invisible[row].indexOf(col) < 0) {
+            if (!contains(puzzle.invisible, [row,col])) {
                 selectors.push(gemSelector(row, col));
             }
         }
@@ -81,10 +95,10 @@ function content(puzzle) {
         result += `<div id="row${row}" class="container-row">`;
         for (let col = 0; col < puzzle.columnCount; col++) {
             result += `<img id="${gemID(row, col)}" src="res/gem.png" onclick="handlePress(${row}, ${col})" class="gem`
-            if (puzzle.initialSelections[row].indexOf(col) >= 0) {
+            if (contains(puzzle.initialSelections, [row,col])) {
                 result += " selected";
             }
-            if (puzzle.invisible && puzzle.invisible[row].indexOf(col) >= 0) {
+            if (contains(puzzle.invisible, [row,col])) {
                 result += " invisible";
             }
             result += `"/>`;
@@ -123,7 +137,7 @@ function reset(puzzle) {
 
     for (let row = 0; row < puzzle.rowCount; row++) {
         for (let col = 0; col < puzzle.columnCount; col++) {
-            const selected = startSelected[row].indexOf(col) >= 0;
+            const selected = contains(startSelected, [row,col]);
             const element = $(gemSelector(row, col));
             if (selected) {
                 element.addClass(SELECTED);
