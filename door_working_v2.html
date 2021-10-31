@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, height=device-height, initial-scale = 1.0, maximum-scale=1.0" />
+	<title>Van Richten Door</title>
+
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
+		html {
+			height: 100vh;
+			width: 100vw;
+		}
+
+		body {
+			width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			background-color: black;
+			background-image: url('res/background.png');
+			background-repeat: no-repeat;
+			background-size: cover;
+			background-position: center;
+		}
+
+		h2 {
+			font-size: 28px;
+			font-family: Arial, sans-serif;
+			color: white;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
+
+		input {
+			width: 200px;
+			height: 20px;
+			padding: 3px;
+			border-radius: 3px;
+			border: none;
+			color: black;
+			font-size: 16px;
+			font-family: Arial, sans-serif;
+			margin-bottom: 10px;
+			background-color: white;
+		}
+
+		button {
+			width: 100px;
+			height: 25px;
+			padding: 3px;
+			border-radius: 3px;
+			border: 2px black solid;
+			color: black;
+			font-size: 16px;
+			background-color: white;
+			font-family: Arial, sans-serif;
+			cursor: pointer;
+		}
+
+		#door {
+			height: 650px;
+			width: 900px;
+			background-image: url('res/door.png');
+			background-repeat: no-repeat;
+			background-position: center;
+			background-size: cover;
+			position: relative;
+		}
+
+		img {
+			width: 64px;
+			position: absolute;
+			top: 106px;
+			cursor: pointer;
+			filter: hue-rotate(-83deg) saturate(0.3) ;
+			transition: filter 0.4s;
+		}
+
+		#i1 {
+			left: 143px;
+		}
+
+		#i2 {
+			left: 252px;
+		}
+
+		#i3 {
+			left: 362px;
+		}
+
+		#i4 {
+			left: 471px;
+		}
+
+		#i5 {
+			left: 580px;
+		}
+
+		#i6 {
+			left: 690px;
+		}
+
+		.selected {
+			filter: hue-rotate(90deg) saturate(0.56);
+		}
+
+		.fail {
+			filter: hue-rotate(-50deg) saturate(0.7);
+		}
+
+		#restart {
+			position: fixed;
+			top: 15px;
+			right: 15px;
+			z-index: 9999;
+		}
+
+		@media screen and (max-height: 650px) {
+  			#door {
+  				background-image: unset;
+  				display: flex;
+  				flex-direction: row;
+  				justify-content: space-around;
+  				align-items: center;
+  				width: 100%;
+  			}
+
+  			#door img {
+  				position: unset;
+  			}
+		}
+
+		@media screen and (max-width: 640px) {
+  			#door {
+  				background-image: unset;
+  				display: flex;
+  				flex-direction: row;
+  				justify-content: space-around;
+  				align-items: center;
+  				width: 100%;
+  			}
+
+  			#door img {
+  				position: unset;
+  			}
+		}
+
+		@media screen and (max-width: 430px) {
+  			#door {
+  				background-image: url('res/rotate.png');
+  				background-size: contain;
+  				width: 50%;
+  				height: 50%;
+  			}
+
+  			#door img {
+  				display: none;
+  			}
+		}
+
+	</style>
+</head>
+<body>
+
+	<script type="text/javascript" src="res/jquery-3.5.0.min.js"></script>
+	<script type="text/javascript">
+
+		////// 'Global' variables
+		const PASSWORD = "khazan";
+		const SELECTED = "selected";
+		const FAIL = "fail";
+		const PUZZLES = [
+			{ gemCount: 6, initialSelections: [1, 3, 4], numberOfTries: 4 },
+		];
+	
+		let count = 0;
+		let disabled = false;
+		const puzzleIterator = PUZZLES.values();
+		let puzzleResult = puzzleIterator.next();
+		generate(puzzleResult.value);
+
+		////// Functions
+		function gemSelector(gem) { return `#i${gem}`; }
+
+		function content(puzzle) {
+			let result = `<img id="restart" src="res/restart.png" onclick="restart();">
+			
+							<div id="door">`;
+			for (gem = 1; gem <= puzzle.gemCount; gem++) {
+				result += `<img id="i${gem}" src="res/gem.png" onclick="handlePress(${gem})"`
+				if (puzzle.initialSelections.indexOf(gem) >= 0) {
+					result += ` class="selected"`;
+				}
+					result += `>`;
+			}
+			return result;
+		}
+
+		function generate(puzzle) {
+			$('body').prepend(content(puzzle));
+		}
+
+		function clear() {
+			$('body').find('*:lt(2)').remove();
+		}
+
+		function setup(puzzle) {
+			clear();
+			generate(puzzle);
+		}
+
+		function fail(puzzle) {
+			for (gem = 1; gem <= puzzle.gemCount; gem++) {
+				const element = $(gemSelector(gem));
+				element.removeClass(SELECTED);
+				element.addClass(FAIL);
+			}
+		}
+
+		function reset(puzzle) {
+			const startSelected = puzzle.initialSelections;
+			for (gem = 1; gem <= puzzle.gemCount; gem++) {
+				const selected = startSelected.indexOf(gem) >= 0;
+				const element = $(gemSelector(gem));
+				if (select) {
+					element.addClass(SELECTED);
+				}
+				if (!select) {
+					element.removeClass(SELECTED);
+				}
+				element.removeClass(FAIL);
+			}
+			count = 0;
+			disabled = false;
+		}
+
+		function failAndReset(puzzle) {
+			disabled = true;
+			setTimeout(() => {
+				fail(puzzle);
+				setTimeout(() => {
+					reset(puzzle);
+				}, 500);
+			}, 500);
+		}
+
+		function restart() {
+			$('body').find('*:lt(2)').remove();
+			generate();
+		}
+
+		function finish() {}
+
+		function gemSelector(number) {
+			return "#i" + number;
+		}
+
+		function allSelected(gemCount) {
+			for (gem = 1; gem <= gemCount; gem++) {
+				const selector = gemSelector(gem);
+				console.log(selector);
+				console.log($(selector).hasClass(SELECTED));
+				if (!$(selector).hasClass(SELECTED)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		function updateColors(gem, stop) {
+			// If the buttons are disabled,
+			// or the gem number is outside of the range 1-6,
+			// do nothing
+			console.log(puzzleResult);
+			if (disabled || gem < 1 || gem > puzzleResult.value.gemCount) { return; }
+			
+			const element = $(gemSelector(gem));
+			if ( element.hasClass(SELECTED) ) {
+				element.removeClass(SELECTED);
+				if (!stop) {
+					updateColors(gem + 1, true);
+					updateColors(gem - 1, true);
+				} 
+			} else {
+				element.addClass(SELECTED);
+				if (!stop) {
+					updateColors(gem + 1, true);
+					updateColors(gem - 1, true);
+				}
+			}
+		}
+
+		function handlePuzzleCompletion() {
+			puzzleResult = puzzleIterator.next();
+			if (puzzleResult.done) {
+				finish();
+				return;
+			}
+			reset(puzzleResult.value);
+		}
+
+		function handlePress(gem, stop) {
+
+			updateColors(gem, false);
+			console.log(puzzleResult);
+			puzzle = puzzleResult.value;
+
+			const complete = allSelected(puzzle.gemCount);
+			console.log(`complete: ${complete}`);
+			if (complete) {
+				handlePuzzleCompletion();
+			} else if (!stop) {
+				count += 1;
+				console.log(count);
+				if (count >= puzzle.numberOfTries && !complete) {
+					failAndReset(puzzle);
+				}
+			}
+		}
+	</script>
+</body>
+</html>
