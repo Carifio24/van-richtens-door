@@ -12,14 +12,14 @@ const INVISIBLE = "invisible";
 const GEM_CONTAINER = $("#gem-container");
 const TRANSITION_MS = 750;
 const PUZZLES = [
-    // { rowCount: 1, columnCount: 6, initialSelections: [[0,0], [0,2], [0,3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
-    // { rowCount: 1, columnCount: 7, initialSelections: [[0,1], [0,5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
-    // { rowCount: 2, columnCount: 3, initialSelections: [], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
-    // { rowCount: 3, columnCount: 3, initialSelections: [[0,0], [1,1], [2,2]], numberOfTries: 2 }, // Solution(2): [(0,2), (2,0)]
-    // { rowCount: 3, columnCount: 3, initialSelections: [], numberOfTries: 5 }, // Solution (5): [(2,0), (2,2), (0,2), (0,0), (1,1)]
-    // { rowCount: 4, columnCount: 4, initialSelections: [[0,0], [0,1], [1,0], [2,0], [2,1], [2,3], [3,3]], numberOfTries: 6 }, // Solution (6): [(0,1), (1,0), (1,1), (1,3), (2,2), (3,0)]
-    // { rowCount: 2, columnCount: 5, initialSelections: [[0,0], [0,2], [0,3], [1,1]], numberOfTries: 4 }, // Solution (4): [(0,3), (1,1), (1,2), (1,3)]
-    // { rowCount: 3, columnCount: 5, initialSelections: [[0,0], [0,2], [1,2], [1,3], [1,4], [2,4]], numberOfTries: 5 }, // Solution (5): [(0,2), (1,2), (1,4), (2,0), (2,4)]
+    { rowCount: 1, columnCount: 6, initialSelections: [[0,0], [0,2], [0,3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
+    { rowCount: 1, columnCount: 7, initialSelections: [[0,1], [0,5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
+    { rowCount: 2, columnCount: 3, initialSelections: [], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
+    { rowCount: 3, columnCount: 3, initialSelections: [[0,0], [1,1], [2,2]], numberOfTries: 2 }, // Solution(2): [(0,2), (2,0)]
+    { rowCount: 3, columnCount: 3, initialSelections: [], numberOfTries: 5 }, // Solution (5): [(2,0), (2,2), (0,2), (0,0), (1,1)]
+    { rowCount: 4, columnCount: 4, initialSelections: [[0,0], [0,1], [1,0], [2,0], [2,1], [2,3], [3,3]], numberOfTries: 6 }, // Solution (6): [(0,1), (1,0), (1,1), (1,3), (2,2), (3,0)]
+    { rowCount: 2, columnCount: 5, initialSelections: [[0,0], [0,2], [0,3], [1,1]], numberOfTries: 4 }, // Solution (4): [(0,3), (1,1), (1,2), (1,3)]
+    { rowCount: 3, columnCount: 5, initialSelections: [[0,0], [0,2], [1,2], [1,3], [1,4], [2,4]], numberOfTries: 5 }, // Solution (5): [(0,2), (1,2), (1,4), (2,0), (2,4)]
     { rowCount: 2, columnCount: 4, initialSelections: [[0,1], [1,3]], numberOfTries: 12 }, // Solution (7): [(0,0), (0,3), (0,1), (1,0), (0,2), (1,1), (1,3)]
     { rowCount: 3, columnCount: 3, initialSelections: [[0,1], [2,1]], numberOfTries: 2, invisible: [[1,1]] }, // Solution (2): [(1, 0), (1, 2)]
     { rowCount: 4, columnCount: 4, initialSelections: [[0,1], [1,0], [1,2], [2,1], [2,2]], invisible: [[0,0], [0,3], [3,0], [3,3]], numberOfTries: 5 } // Solution (5): [(1,1), (3,2), (2,0), (0,2), (2,3)]
