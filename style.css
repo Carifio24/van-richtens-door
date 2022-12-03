@@ -88,6 +88,10 @@ img {
     filter: hue-rotate(60deg) saturate(1);
 }
 
+.yellow {
+    filter: hue-rotate(135deg) saturate(0.5);
+}
+
 .green, .complete {
     filter: hue-rotate(180deg) saturate(1);
 }

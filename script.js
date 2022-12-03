@@ -11,10 +11,10 @@ const COMPLETE = "complete";
 const INVISIBLE = "invisible";
 const GEM_CONTAINER = $("#gem-container");
 const TRANSITION_MS = 750;
-const COLORS = ["purple", "blue", "orange", "red", "green"];
+const COLORS = ["blue", "orange", "yellow", "purple", "green"];
 
 const PUZZLES = [
-    { rowCount: 3, columnCount: 3, initialConfiguration: [[1,2,1], [2,2,2], [1,2,1]], numberOfTries: 3, colorCount: 3 }, // Solution (3): [(1,1)]
+    { rowCount: 3, columnCount: 3, initialConfiguration: [[0,1,0], [1,1,1], [0,1,0]], numberOfTries: 3, colorCount: 3 }, // Solution (3): [(1,1)]
     { rowCount: 3, columnCount: 3, initialConfiguration: [[1,2,0], [1,2,0], [2,0,0]], numberOfTries: 4, colorCount: 3 }, // Solution (2): [(1,0), (0,0)]
     { rowCount: 3, columnCount: 3, initialConfiguration: [[0,0,1], [2,2,1], [0,1,2]], numberOfTries: 10, colorCount: 3 }, // Solution (4): [(1,1), (1,0), (2,2), (2,2)]
     { rowCount: 3, columnCount: 3, initialConfiguration: [[3,2,0], [3,2,1], [1,1,2]], numberOfTries: 10, colorCount: 4 } // Solution (4): [(1,1), (0,1), (2,2), (2,2)]
