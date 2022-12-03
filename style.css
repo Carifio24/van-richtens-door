@@ -74,7 +74,6 @@ img {
     width: 64px;
     padding: 20px;
     cursor: pointer;
-    filter: hue-rotate(-83deg) saturate(0.3) ;
     transition: filter 0.4s;
     animation: fadeIn 0.75s;
     -webkit-tap-highlight-color: transparent;
@@ -90,7 +89,7 @@ img {
 }
 
 .green, .complete {
-    filter: hue-rotate(90deg) saturate(0.56);
+    filter: hue-rotate(180deg) saturate(1);
 }
 
 .blue {

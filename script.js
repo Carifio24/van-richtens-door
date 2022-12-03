@@ -11,25 +11,14 @@ const COMPLETE = "complete";
 const INVISIBLE = "invisible";
 const GEM_CONTAINER = $("#gem-container");
 const TRANSITION_MS = 750;
-const PUZZLES_R1 = [
-    { rowCount: 1, columnCount: 6, initialSelections: [[0,0], [0,2], [0,3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
-    { rowCount: 1, columnCount: 7, initialSelections: [[0,1], [0,5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
-    { rowCount: 2, columnCount: 3, initialSelections: [], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
-    { rowCount: 3, columnCount: 3, initialSelections: [[0,0], [1,1], [2,2]], numberOfTries: 2 }, // Solution(2): [(0,2), (2,0)]
-    { rowCount: 3, columnCount: 3, initialSelections: [], numberOfTries: 5 }, // Solution (5): [(2,0), (2,2), (0,2), (0,0), (1,1)]
-    { rowCount: 4, columnCount: 4, initialSelections: [[0,0], [0,1], [1,0], [2,0], [2,1], [2,3], [3,3]], numberOfTries: 6 }, // Solution (6): [(0,1), (1,0), (1,1), (1,3), (2,2), (3,0)]
-    { rowCount: 2, columnCount: 5, initialSelections: [[0,0], [0,2], [0,3], [1,1]], numberOfTries: 4 }, // Solution (4): [(0,3), (1,1), (1,2), (1,3)]
-    { rowCount: 3, columnCount: 5, initialSelections: [[0,0], [0,2], [1,2], [1,3], [1,4], [2,4]], numberOfTries: 5 }, // Solution (5): [(0,2), (1,2), (1,4), (2,0), (2,4)]
-    { rowCount: 2, columnCount: 4, initialSelections: [[0,1], [1,3]], numberOfTries: 12 }, // Solution (7): [(0,0), (0,3), (0,1), (1,0), (0,2), (1,1), (1,3)]
-    { rowCount: 3, columnCount: 3, initialSelections: [[0,1], [2,1]], numberOfTries: 2, invisible: [[1,1]] }, // Solution (2): [(1, 0), (1, 2)]
-    { rowCount: 4, columnCount: 4, initialSelections: [[0,1], [1,0], [1,2], [2,1], [2,2]], invisible: [[0,0], [0,3], [3,0], [3,3]], numberOfTries: 5 } // Solution (5): [(1,1), (3,2), (2,0), (0,2), (2,3)]
-];
+const COLORS = ["blue", "orange", "red", "green", "purple"];
 
-const PUZZLES_R2 = [
-    { rowCount: 3, columnCount: 3, initialSelections: [[0,2], [1,0], [2,2]], numberOfTries: 3 } // Solution (3): [(0,0), (2,1), (2,2)]
+const PUZZLES = [
+    { rowCount: 3, columnCount: 3, initialConfiguration: [[0,1,0], [1,1,1], [0,1,0]], numberOfTries: 3, colorCount: 3 }, // Solution (3): [(1,1)]
+    { rowCount: 3, columnCount: 3, initialConfiguration: [[1,2,0], [1,2,0], [2,0,0]], numberOfTries: 4, colorCount: 3 }, // Solution (2): [(1,0), (1,1)]
+    { rowCount: 3, columnCount: 3, initialConfiguration: [[0,0,1], [2,2,1], [0,1,2]], numberOfTries: 10, colorCount: 3 }, // Solution (4): [(1,1), (1,0), (2,2), (2,2)]
+    { rowCount: 3, columnCount: 3, initialConfiguration: [[3,2,0], [3,2,1], [1,1,2]], numberOfTries: 10, colorCount: 4 } // Solution (4): [(1,1), (0,1), (2,2), (2,2)]
 ]
-
-const PUZZLES = PUZZLES_R2;
 
 ///// Initial setup
 let count = 0;
@@ -45,6 +34,12 @@ document.onfullscreenchange = (_event) => {
     } else {
         fsButton.show();
     }
+}
+
+function nextColor(color, colorCount) {
+    const index = COLORS.indexOf(color);
+    const newIndex = (index + 1) % colorCount;
+    return COLORS[newIndex];
 }
 
 const adjacencyTypes = {
@@ -112,14 +107,8 @@ function content(puzzle) {
     for (let row = 0; row < puzzle.rowCount; row++) {
         result += `<div id="row${row}" class="container-row">`;
         for (let col = 0; col < puzzle.columnCount; col++) {
-            result += `<img id="${gemID(row, col)}" src="res/gem.png" onclick="handlePress(${row}, ${col})" class="gem`
-            if (contains(puzzle.initialSelections, [row,col])) {
-                result += " selected";
-            }
-            if (contains(puzzle.invisible, [row,col])) {
-                result += " invisible";
-            }
-            result += `"/>`;
+            const color = COLORS[puzzle.initialConfiguration[row][col]];
+            result += `<img id="${gemID(row, col)}" src="res/gem.png" onclick="handlePress(${row}, ${col})" class="gem ${color}"/>`
         }
         result += "</div>";
     }
@@ -143,38 +132,18 @@ function setup(puzzle) {
 
 function setAllGemsToClass(puzzle, className) {
     gems(puzzle).forEach(gem => {
-        gem.removeClass(SELECTED);
-        gem.addClass(className)
+        gem.get(0).classList = ["gem"];
     });
 }
 
 function finish() {}
-
-function reset(puzzle) {
-    const startSelected = puzzle.initialSelections;
-
-    for (let row = 0; row < puzzle.rowCount; row++) {
-        for (let col = 0; col < puzzle.columnCount; col++) {
-            const selected = contains(startSelected, [row,col]);
-            const element = $(gemSelector(row, col));
-            if (selected) {
-                element.addClass(SELECTED);
-            } else {
-                element.removeClass(SELECTED);
-            }
-            element.removeClass(FAIL);
-        }
-    }
-    count = 0;
-    disabled = false;
-}
 
 function failAndReset(puzzle) {
     disabled = true;
     setTimeout(() => {
         setAllGemsToClass(puzzle, FAIL);
         setTimeout(() => {
-            reset(puzzle);
+            setup(puzzle);
         }, TRANSITION_MS);
     }, TRANSITION_MS);
 }
@@ -189,31 +158,32 @@ function completeAndAdvance(puzzle, nextPuzzle) {
     }, TRANSITION_MS);
 }
 
-function allSelected(puzzle) {
-    return gems(puzzle).every(gem => gem.hasClass(SELECTED));
+function allSame(puzzle) {
+    return COLORS.some(color => gems(puzzle).every(gem => gem.hasClass(color)));
 }
 
 function updateColors(row, col, adjacent, stop) {
     // If the buttons are disabled,
     // or the gem number is outside of the range 1-nGems,
     // do nothing
+    const puzzle = puzzleResult.value;
     if (disabled
         || row < 0
-        || row >= puzzleResult.value.rowCount
+        || row >= puzzle.rowCount
         || col < 0
-        || col >= puzzleResult.value.columnCount
+        || col >= puzzle.columnCount
     ) { return; }
     
     // Get the element and adjacent positions
-    const element = $(gemSelector(row, col));
+    const jqElement = $(gemSelector(row, col));
+    const element = jqElement.get(0);
     const adjacentSpaces = adjacent(row, col);
 
     // Set the class of this element
-    if (element.hasClass(SELECTED)) {
-        element.removeClass(SELECTED);
-    } else {
-        element.addClass(SELECTED);
-    }
+    const color = element.classList[1];
+    const newColor = nextColor(color, puzzle.colorCount);
+    jqElement.removeClass(color);
+    jqElement.addClass(newColor);
 
     // If this is the initial gem in the chain,
     // then update all adjacent gems
@@ -242,7 +212,7 @@ function handlePress(row, col, stop) {
     const adjacent = adjacencyTypes[puzzle.adjacent || "cross"];
     updateColors(row, col, adjacent, false);
 
-    const complete = allSelected(puzzle);
+    const complete = allSame(puzzle);
     if (complete) {
         handlePuzzleComplete();
     } else if (!stop) {
