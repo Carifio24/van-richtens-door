@@ -26,7 +26,7 @@ const PUZZLES_R1 = [
 ];
 
 const PUZZLES_R2 = [
-    { rowCount: 3, columnCount: 3, initialSelections: [[0,0], [0,1], [1,0]], numberOfTries: 5, adjacent: "topLeft" }
+    { rowCount: 3, columnCount: 3, initialSelections: [[0,2], [1,0], [2,2]], numberOfTries: 3 } // Solution (3): [(0,0), (2,1), (2,2)]
 ]
 
 const PUZZLES = PUZZLES_R2;
@@ -206,7 +206,7 @@ function updateColors(row, col, adjacent, stop) {
     
     // Get the element and adjacent positions
     const element = $(gemSelector(row, col));
-    const adjacentSpaces = [[row + 1, col], [row, col - 1], [row - 1, col], [row, col + 1]];
+    const adjacentSpaces = adjacent(row, col);
 
     // Set the class of this element
     if (element.hasClass(SELECTED)) {

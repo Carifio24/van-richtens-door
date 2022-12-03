@@ -85,16 +85,24 @@ img {
     100% {opacity:1;}
 }
 
-.selected {
-    filter: hue-rotate(90deg) saturate(0.56);
-}
-
-.fail {
+.red, .fail {
     filter: hue-rotate(60deg) saturate(1);
 }
 
-.complete {
-    filter: hue-rotate(180deg) saturate(1);
+.green, .complete {
+    filter: hue-rotate(90deg) saturate(0.56);
+}
+
+.blue {
+    filter: hue-rotate(-83deg) saturate(0.3);
+}
+
+.orange, .selected {
+    filter: hue-rotate(90deg) saturate(0.56);
+}
+
+.purple {
+    filter: none;
 }
 
 .invisible {
