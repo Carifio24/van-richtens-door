@@ -11,7 +11,7 @@ const COMPLETE = "complete";
 const INVISIBLE = "invisible";
 const GEM_CONTAINER = $("#gem-container");
 const TRANSITION_MS = 750;
-const PUZZLES = [
+const PUZZLES_R1 = [
     { rowCount: 1, columnCount: 6, initialSelections: [[0,0], [0,2], [0,3]], numberOfTries: 4 }, // Solution (4): [2,4,0,1]
     { rowCount: 1, columnCount: 7, initialSelections: [[0,1], [0,5]], numberOfTries: 5 }, // Solution (5): [1,2,3,4,5],
     { rowCount: 2, columnCount: 3, initialSelections: [], numberOfTries: 2 }, // Solution (2): [(0,0), (1,2)]
@@ -24,6 +24,12 @@ const PUZZLES = [
     { rowCount: 3, columnCount: 3, initialSelections: [[0,1], [2,1]], numberOfTries: 2, invisible: [[1,1]] }, // Solution (2): [(1, 0), (1, 2)]
     { rowCount: 4, columnCount: 4, initialSelections: [[0,1], [1,0], [1,2], [2,1], [2,2]], invisible: [[0,0], [0,3], [3,0], [3,3]], numberOfTries: 5 } // Solution (5): [(1,1), (3,2), (2,0), (0,2), (2,3)]
 ];
+
+const PUZZLES_R2 = [
+    { rowCount: 3, columnCount: 3, initialSelections: [[0,0], [0,1], [1,0]], numberOfTries: 5, adjacent: "topLeft" }
+]
+
+const PUZZLES = PUZZLES_R2;
 
 ///// Initial setup
 let count = 0;
@@ -40,6 +46,18 @@ document.onfullscreenchange = (_event) => {
         fsButton.show();
     }
 }
+
+const adjacencyTypes = {
+    cross: (row, col) => [[row + 1, col], [row, col - 1], [row - 1, col], [row, col + 1]],
+    topRight: (row, col) => [[row, col - 1], [row + 1, col - 1], [row + 1, col]],
+    topLeft: (row, col) => [[row, col + 1], [row + 1, col + 1], [row + 1, col]],
+    topCenterT: (row, col) => [[row, col - 1], [row, col + 1], [row + 1, col]],
+    bottomCenterT: (row, col) => [[row, col - 1], [row, col + 1], [row - 1, col]],
+    bottomLeft: (row, col) => [[row - 1, col], [row - 1, col + 1], [row, col + 1]],
+    bottomRight: (row, col) => [[row, col - 1], [row - 1, col], [row - 1, col - 1]]
+}
+
+let adjacent = adjacencyTypes.cross;
 
 ////// Functions
 
@@ -175,7 +193,7 @@ function allSelected(puzzle) {
     return gems(puzzle).every(gem => gem.hasClass(SELECTED));
 }
 
-function updateColors(row, col, stop) {
+function updateColors(row, col, adjacent, stop) {
     // If the buttons are disabled,
     // or the gem number is outside of the range 1-nGems,
     // do nothing
@@ -188,7 +206,7 @@ function updateColors(row, col, stop) {
     
     // Get the element and adjacent positions
     const element = $(gemSelector(row, col));
-    const adjacent = [[row + 1, col], [row, col - 1], [row - 1, col], [row, col + 1]];
+    const adjacentSpaces = [[row + 1, col], [row, col - 1], [row - 1, col], [row, col + 1]];
 
     // Set the class of this element
     if (element.hasClass(SELECTED)) {
@@ -200,8 +218,8 @@ function updateColors(row, col, stop) {
     // If this is the initial gem in the chain,
     // then update all adjacent gems
     if (!stop) {
-        for (const pos of adjacent) {
-            updateColors(pos[0], pos[1], true);
+        for (const pos of adjacentSpaces) {
+            updateColors(pos[0], pos[1], adjacent, true);
         }
     }
 
@@ -220,8 +238,9 @@ function handlePuzzleComplete() {
 
 function handlePress(row, col, stop) {
 
-    updateColors(row, col, false);
-    const puzzle = puzzleResult.value;
+    const puzzle = puzzleResult.value; 
+    const adjacent = adjacencyTypes[puzzle.adjacent || "cross"];
+    updateColors(row, col, adjacent, false);
 
     const complete = allSelected(puzzle);
     if (complete) {
