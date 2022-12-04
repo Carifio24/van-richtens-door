@@ -18,14 +18,13 @@ const PUZZLES = [
     { rowCount: 3, columnCount: 3, initialConfiguration: [[1,2,0], [1,2,0], [2,0,0]], numberOfTries: 4, colorCount: 3 }, // Solution (2): [(1,0), (0,0)]
     { rowCount: 3, columnCount: 3, initialConfiguration: [[0,0,1], [2,2,1], [0,1,2]], numberOfTries: 10, colorCount: 3 }, // Solution (4): [(1,1), (1,0), (2,2), (2,2)]
     { rowCount: 3, columnCount: 3, initialConfiguration: [[3,2,0], [3,2,1], [1,1,2]], numberOfTries: 10, colorCount: 4 } // Solution (4): [(1,1), (0,1), (2,2), (2,2)]
-]
+];
 
 ///// Initial setup
-let count = 0;
-let disabled = false;
+let count, disabled;
 const puzzleIterator = PUZZLES.values();
 let puzzleResult = puzzleIterator.next();
-generate(puzzleResult.value);
+setup(puzzleResult.value);
 
 document.onfullscreenchange = (_event) => {
     const fsButton = $("#fs-button");
